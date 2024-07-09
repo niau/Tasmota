@@ -371,8 +371,14 @@ void ModbusBridgeHandle(void)
       if (modbusBridge.type == ModbusBridgeType::mb_raw)
       {
         // Ouput raw data as decimal bytes
-        Response_P(PSTR("{\"" D_JSON_MODBUS_RECEIVED "\":{\"RAW\":["));
-        for (uint8_t i = 0; i < modbusBridgeModbus->ReceiveCount(); i++)
+        Response_P(PSTR("{\"" D_JSON_MODBUS_RECEIVED "\":{"));
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_DEVICE_ADDRESS "\":%d,"), modbusBridge.buffer[0]);
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_FUNCTION_CODE "\":%d,"), modbusBridge.buffer[1]);
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_START_ADDRESS "\":%d,"), modbusBridge.startAddress);
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_LENGTH "\":%d,"), modbusBridgeModbus->ReceiveCount());
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_COUNT "\":%d,"), modbusBridge.count);
+        ResponseAppend_P(PSTR("\"RAW\":["));
+	for (uint8_t i = 0; i < modbusBridgeModbus->ReceiveCount(); i++)
         {
           ResponseAppend_P(PSTR("%d"), modbusBridge.buffer[i]);
           if (i < modbusBridgeModbus->ReceiveCount() - 1)
@@ -388,8 +394,14 @@ void ModbusBridgeHandle(void)
       }
       else if (modbusBridge.type == ModbusBridgeType::mb_hex)
       {
-        // Output raw data as hexadecimal bytes
-        Response_P(PSTR("{\"" D_JSON_MODBUS_RECEIVED "\":{\"HEX\":["));
+        // Output hex data as hexadecimal bytes
+	Response_P(PSTR("{\"" D_JSON_MODBUS_RECEIVED "\":{"));
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_DEVICE_ADDRESS "\":%d,"), modbusBridge.buffer[0]);
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_FUNCTION_CODE "\":%d,"), modbusBridge.buffer[1]);
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_START_ADDRESS "\":%d,"), modbusBridge.startAddress);
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_LENGTH "\":%d,"), modbusBridgeModbus->ReceiveCount());
+        ResponseAppend_P(PSTR("\"" D_JSON_MODBUS_COUNT "\":%d,"), modbusBridge.count);
+        ResponseAppend_P(PSTR("\"HEX\":["));
         for (uint8_t i = 0; i < modbusBridgeModbus->ReceiveCount(); i++)
         {
           ResponseAppend_P(PSTR("0x%02X"), modbusBridge.buffer[i]);
